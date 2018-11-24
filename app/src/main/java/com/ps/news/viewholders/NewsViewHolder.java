@@ -56,12 +56,14 @@ public class NewsViewHolder extends BaseViewHolder<NewsVO> {
                 tvPublishedDate.setText(mData.getPublishedDate().split("T")[0]);
             }
 
-            ivNewsHeroImg.setVisibility(View.VISIBLE);
             if (mData.getNewsImage() != null) {
+                ivNewsHeroImg.setVisibility(View.VISIBLE);
                 RequestOptions requestOptions = new RequestOptions()
                         .placeholder(R.drawable.img_placeholder)
                         .centerCrop();
                 Glide.with(itemView.getRootView().getContext()).load(mData.getNewsImage()).apply(requestOptions).into(ivNewsHeroImg);
+            }else {
+                ivNewsHeroImg.setVisibility(View.GONE);
             }
 
         }

@@ -31,6 +31,12 @@
                 <action android:name="android.net.conn.CONNNECTIVITY_CHANGE" />
             </intent-filter>
         </receiver>
+
+        <provider
+            android:name=".persistence.NewsProvider"
+            android:authorities="com.ps.news"
+            android:exported="false"
+            android:syncable="true" />
     </application>
 
 </manifest>
