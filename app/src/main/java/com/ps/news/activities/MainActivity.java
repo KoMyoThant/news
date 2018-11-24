@@ -1,58 +1,94 @@
 package com.ps.news.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
-import android.support.v7.app.AppCompatActivity;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
-import android.widget.TextView;
 
 import com.ps.news.R;
+import com.ps.news.adapters.NewsListAdapter;
+import com.ps.news.components.EmptyViewPod;
+import com.ps.news.components.rvset.SmartRecyclerView;
+import com.ps.news.components.rvset.SmartScrollListener;
+import com.ps.news.data.model.NewsModel;
+import com.ps.news.delegates.NewsItemDelegate;
+import com.ps.news.events.RestApiEvents;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity {
-    //TODO to remove
-    private TextView mTextMessage;
+public class MainActivity extends BaseActivity implements NewsItemDelegate {
 
     @BindView(R.id.toolbar)
     Toolbar toolbar;
 
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+    @BindView(R.id.rv_news_list)
+    SmartRecyclerView rvNewsList;
 
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-                    mTextMessage.setText(R.string.title_home);
-                    return true;
-                case R.id.navigation_dashboard:
-                    mTextMessage.setText(R.string.title_dashboard);
-                    return true;
-                case R.id.navigation_notifications:
-                    mTextMessage.setText(R.string.title_notifications);
-                    return true;
-            }
-            return false;
-        }
-    };
+    @BindView(R.id.vp_news_list)
+    EmptyViewPod vpNewsList;
+
+    private NewsListAdapter newsListAdapter;
+    private SmartScrollListener mSmartScrollListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this,this);
+        ButterKnife.bind(this, this);
 
         setSupportActionBar(toolbar);
         toolbar.setBackgroundColor(getResources().getColor(R.color.accent_color));
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_color));
 
-        mTextMessage = (TextView) findViewById(R.id.message);
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        NewsModel.getInstance().startLoadingJobList(getBaseContext());
+
+        vpNewsList.setEmptyData("Loading...");
+        rvNewsList.setEmptyView(vpNewsList);
+        rvNewsList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+        newsListAdapter = new NewsListAdapter(getApplicationContext(), this);
+        rvNewsList.setAdapter(newsListAdapter);
+
+        mSmartScrollListener = new SmartScrollListener(new SmartScrollListener.ControllerSmartScroll() {
+            @Override
+            public void onListEndReached() {
+                Snackbar.make(rvNewsList, "Loading data...", Snackbar.LENGTH_LONG).show();
+            }
+        });
+        rvNewsList.addOnScrollListener(mSmartScrollListener);
     }
 
+    @Override
+    public void onTapNews() {
+        Intent intent = NewsDetailActivity.newIntent(getBaseContext(),"");
+        startActivity(intent);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onNewsDataLoaded(RestApiEvents.NewsListDataLoadedEvent newsListDataLoadedEvent) {
+        if (newsListDataLoadedEvent.getLoadedNewsList() == null && newsListDataLoadedEvent.getLoadedNewsList().isEmpty()) {
+            vpNewsList.setEmptyData("No News.");
+        } else {
+            newsListAdapter.setNewData(newsListDataLoadedEvent.getLoadedNewsList());
+        }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        EventBus.getDefault().unregister(this);
+    }
 }
