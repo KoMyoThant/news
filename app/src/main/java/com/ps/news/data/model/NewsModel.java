@@ -6,7 +6,7 @@ import com.ps.news.data.vos.NewsVO;
 import com.ps.news.events.RestApiEvents;
 import com.ps.news.network.NewsDataAgent;
 import com.ps.news.network.NewsDataAgentImpl;
-import com.ps.news.utils.AppConstants;
+import com.ps.news.utils.ConfigUtils;
 import com.ps.news.utils.RestapiConstants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -23,9 +23,11 @@ public class NewsModel {
 
     private static NewsModel objInstance;
 
-    private NewsDataAgent haulioJobDataAgent;
+    private NewsDataAgent newsDataAgent;
 
     private List<NewsVO> newsList;
+
+    private ConfigUtils configUtils;
 
     public static NewsModel getInstance() {
         if (objInstance == null) {
@@ -34,8 +36,8 @@ public class NewsModel {
         return objInstance;
     }
 
-    public NewsModel() {
-        haulioJobDataAgent = NewsDataAgentImpl.getInstance();
+    private NewsModel() {
+        newsDataAgent = NewsDataAgentImpl.getInstance();
         newsList = new ArrayList<>();
 
         EventBus eventBus = EventBus.getDefault();
@@ -44,8 +46,15 @@ public class NewsModel {
         }
     }
 
-    public void startLoadingJobList(Context context) {
-        haulioJobDataAgent.loadNews(RestapiConstants.API_KEY,"10","1","us",context);
+    public void startLoadingNewsList(Context context) {
+        //TODO to move place
+        configUtils = new ConfigUtils(context);
+        newsDataAgent.loadNews(RestapiConstants.API_KEY, "10", configUtils.loadPageIndex(), "us", context);
+    }
+
+    public void loadMoreNews(Context context) {
+        int pageIndex = configUtils.loadPageIndex();
+        newsDataAgent.loadNews(RestapiConstants.API_KEY, "10", pageIndex, "us", context);
     }
 
     public List<NewsVO> getJobList() {
@@ -54,6 +63,7 @@ public class NewsModel {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onNewsDataLoaded(RestApiEvents.NewsListDataLoadedEvent newsListDataLoadedEvent) {
-        newsList.addAll(newsListDataLoadedEvent.getLoadedNewsList());
+//        newsList.addAll(newsListDataLoadedEvent.getLoadedNewsList());
+        configUtils.savePageIndex(configUtils.loadPageIndex() + 1);
     }
 }

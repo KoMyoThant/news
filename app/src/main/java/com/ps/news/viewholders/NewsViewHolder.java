@@ -41,20 +41,27 @@ public class NewsViewHolder extends BaseViewHolder<NewsVO> {
         if (data != null) {
             mData = data;
 
-            RequestOptions requestOptions = new RequestOptions()
-                    .placeholder(R.drawable.img_placeholder)
-                    .centerCrop();
+            if (mData.getTitle() != null &&!mData.getTitle().isEmpty()) {
+                tvNewsTitle.setVisibility(View.VISIBLE);
+                tvNewsTitle.setText(mData.getTitle());
+            }
 
-            tvNewsTitle.setText(mData.getTitle());
-            tvNewsSourceName.setText(mData.getSource().getName());
+            if (mData.getSource().getName() != null && !mData.getSource().getName().isEmpty()){
+                tvNewsSourceName.setVisibility(View.VISIBLE);
+                tvNewsSourceName.setText(mData.getSource().getName());
+            }
+
             if (mData.getPublishedDate() != null && !mData.getPublishedDate().isEmpty()) {
+                tvPublishedDate.setVisibility(View.VISIBLE);
                 tvPublishedDate.setText(mData.getPublishedDate().split("T")[0]);
             }
 
+            ivNewsHeroImg.setVisibility(View.VISIBLE);
             if (mData.getNewsImage() != null) {
+                RequestOptions requestOptions = new RequestOptions()
+                        .placeholder(R.drawable.img_placeholder)
+                        .centerCrop();
                 Glide.with(itemView.getRootView().getContext()).load(mData.getNewsImage()).apply(requestOptions).into(ivNewsHeroImg);
-            }else{
-                ivNewsHeroImg.setVisibility(View.GONE);
             }
 
         }

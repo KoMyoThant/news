@@ -53,8 +53,8 @@ public class NewsDataAgentImpl implements NewsDataAgent {
     }
 
     @Override
-    public void loadNews(String apiKey, String pageSize, String page, String country, final Context context) {
-        Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize,page,country);
+    public void loadNews(String apiKey, String pageSize, int page, String country, final Context context) {
+        Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize,String.valueOf(page),country);
         loadMMNewsCall.enqueue(new NewsCallBack<GetNewsResponse>() {
             @Override
             public void onResponse(Call<GetNewsResponse> call, Response<GetNewsResponse> response) {

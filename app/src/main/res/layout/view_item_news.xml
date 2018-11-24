@@ -21,7 +21,8 @@
             android:layout_height="200dp"
             android:layout_marginBottom="@dimen/margin_medium"
             android:scaleType="centerCrop"
-            android:src="@drawable/dummy_news_image" />
+            android:src="@drawable/dummy_news_image"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_news_title"
@@ -37,7 +38,8 @@
             android:text="North and South Korea Get UN's Go-Ahead to Study Joint Rail Project"
             android:textColor="@color/black_full"
             android:textSize="@dimen/text_regular_3x"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:visibility="gone"/>
 
         <View
             android:id="@+id/view_separator"
@@ -58,7 +60,8 @@
             android:layout_toLeftOf="@+id/tv_published_date"
             android:text="The New York Times"
             android:textColor="@color/black_full"
-            android:textSize="@dimen/text_regular_2x" />
+            android:textSize="@dimen/text_regular_2x"
+            android:visibility="gone"/>
 
         <TextView
             android:id="@+id/tv_published_date"
@@ -68,6 +71,7 @@
             android:layout_below="@id/view_separator"
             android:layout_marginRight="@dimen/margin_medium"
             android:text="2018-11-24"
+            android:visibility="gone"
             android:textSize="@dimen/text_regular" />
     </RelativeLayout>
 </android.support.v7.widget.CardView>

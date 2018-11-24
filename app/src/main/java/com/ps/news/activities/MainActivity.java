@@ -2,8 +2,6 @@ package com.ps.news.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.design.widget.Snackbar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 
@@ -48,7 +46,7 @@ public class MainActivity extends BaseActivity implements NewsItemDelegate {
         toolbar.setBackgroundColor(getResources().getColor(R.color.accent_color));
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_color));
 
-        NewsModel.getInstance().startLoadingJobList(getBaseContext());
+        NewsModel.getInstance().startLoadingNewsList(getBaseContext());
 
         vpNewsList.setEmptyData("Loading...");
         rvNewsList.setEmptyView(vpNewsList);
@@ -59,7 +57,8 @@ public class MainActivity extends BaseActivity implements NewsItemDelegate {
         mSmartScrollListener = new SmartScrollListener(new SmartScrollListener.ControllerSmartScroll() {
             @Override
             public void onListEndReached() {
-                Snackbar.make(rvNewsList, "Loading data...", Snackbar.LENGTH_LONG).show();
+//                Snackbar.make(rvNewsList, "Loading data...", Snackbar.LENGTH_LONG).show();
+                NewsModel.getInstance().loadMoreNews(getApplicationContext());
             }
         });
         rvNewsList.addOnScrollListener(mSmartScrollListener);
@@ -76,7 +75,7 @@ public class MainActivity extends BaseActivity implements NewsItemDelegate {
         if (newsListDataLoadedEvent.getLoadedNewsList() == null && newsListDataLoadedEvent.getLoadedNewsList().isEmpty()) {
             vpNewsList.setEmptyData("No News.");
         } else {
-            newsListAdapter.setNewData(newsListDataLoadedEvent.getLoadedNewsList());
+            newsListAdapter.appendNewData(newsListDataLoadedEvent.getLoadedNewsList());
         }
     }
 
