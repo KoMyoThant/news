@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/rl_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white_full"
+    android:paddingBottom="@dimen/margin_medium"
+    android:paddingLeft="@dimen/margin_medium_2"
+    android:paddingRight="@dimen/margin_medium_2"
+    android:paddingTop="@dimen/margin_medium_2">
+
+    <ImageView
+        android:id="@+id/iv_project_icon"
+        android:layout_width="@dimen/icon_dimen_regular"
+        android:layout_height="@dimen/icon_dimen_regular"
+        android:src="@mipmap/ic_launcher" />
+
+    <TextView
+        android:id="@+id/tv_project_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@id/iv_project_icon"
+        android:layout_alignTop="@id/iv_project_icon"
+        android:layout_marginLeft="@dimen/margin_medium"
+        android:layout_toRightOf="@id/iv_project_icon"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center_vertical"
+        android:text="@string/app_name"
+        android:textColor="@color/primary_text_color"
+        android:textSize="@dimen/text_regular_3x" />
+
+    <TextView
+        android:id="@+id/tv_confirm_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/iv_project_icon"
+        android:layout_below="@id/iv_project_icon"
+        android:layout_marginLeft="@dimen/margin_small"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:lineSpacingMultiplier="1.2"
+        android:textColor="@color/primary_text_color" />
+
+    <LinearLayout
+        android:id="@+id/ll_dialog_controls"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tv_confirm_msg"
+        android:layout_marginTop="@dimen/margin_medium_2"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_confirm_no"
+            style="@style/AccentButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_button_height"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginRight="@dimen/margin_small"
+            android:layout_weight="1"
+            android:text="@string/confirm_no" />
+
+        <Button
+            android:id="@+id/btn_confirm_yes"
+            style="@style/AccentButton"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dialog_button_height"
+            android:layout_marginBottom="@dimen/margin_medium"
+            android:layout_marginLeft="@dimen/margin_small"
+            android:layout_weight="1"
+            android:text="@string/confirm_yes" />
+
+    </LinearLayout>
+
+</RelativeLayout>

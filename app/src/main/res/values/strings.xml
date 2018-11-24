@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">News</string>
+    <string name="title_home">Home</string>
+    <string name="title_dashboard">Dashboard</string>
+    <string name="title_notifications">Notifications</string>
+
+
+    <string name="msg_generic_no_data">No Data to Display</string>
+
+    <string name="confirm_no">No</string>
+    <string name="confirm_yes">Yes</string>
+    <string name="prompt_ok">Ok</string>
+</resources>
