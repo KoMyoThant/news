@@ -2,7 +2,9 @@ package com.ps.news.data.model;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
+import android.view.View;
 
 import com.ps.news.NewsApp;
 import com.ps.news.data.vos.NewsVO;
@@ -33,6 +35,8 @@ public class NewsModel {
 
     private List<NewsVO> newsList;
 
+    private List<NewsVO> categoryNewsList;
+
     private ConfigUtils configUtils;
 
     public static NewsModel getInstance() {
@@ -45,6 +49,7 @@ public class NewsModel {
     private NewsModel() {
         newsDataAgent = NewsDataAgentImpl.getInstance();
         newsList = new ArrayList<>();
+        categoryNewsList = new ArrayList<>();
 
         EventBus eventBus = EventBus.getDefault();
         if (!eventBus.isRegistered(this)) {
@@ -54,7 +59,7 @@ public class NewsModel {
 
     public void startLoadingNewsList(Context context) {
         //TODO to move place
-        configUtils = new ConfigUtils(context);
+        configUtils = ConfigUtils.getInstance(context);
         newsDataAgent.loadNews(RestapiConstants.API_KEY, "20", configUtils.loadPageIndex(), "us", context);
 
     }
@@ -70,8 +75,32 @@ public class NewsModel {
         startLoadingNewsList(context);
     }
 
-    public List<NewsVO> getJobList() {
+    public List<NewsVO> getNewsList() {
         return newsList;
+    }
+
+    public void startLoadingCategoryNewsList(Context context, String categoryName) {
+        //TODO to move place
+        if (configUtils == null) {
+            configUtils = ConfigUtils.getInstance(context);
+        }
+        newsDataAgent.loadCategoryNews(RestapiConstants.API_KEY, "20", configUtils.loadPageIndex(), categoryName, context);
+
+    }
+
+    public void loadMoreCategoryNews(Context context, String categoryName) {
+        int categoryPageIndex = configUtils.loadCategoryPageIndex();
+        newsDataAgent.loadCategoryNews(RestapiConstants.API_KEY, "10", categoryPageIndex, categoryName, context);
+    }
+
+    public void forceRefreshCategoryNews(Context context, String categoryName) {
+        categoryNewsList = new ArrayList<>();
+        configUtils.saveCategoryPageIndex(1);
+        startLoadingCategoryNewsList(context, categoryName);
+    }
+
+    public List<NewsVO> getCategoryNewsList() {
+        return categoryNewsList;
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

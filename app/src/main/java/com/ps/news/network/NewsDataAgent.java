@@ -7,4 +7,5 @@ import android.content.Context;
  */
 public interface NewsDataAgent {
     void loadNews(String apiKey, String pageSize, int page, String country, Context context);
+    void loadCategoryNews(String apiKey, String pageSize, int page, String category, Context context);
 }

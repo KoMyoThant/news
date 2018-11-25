@@ -55,24 +55,52 @@ public class NewsDataAgentImpl implements NewsDataAgent {
 
     @Override
     public void loadNews(String apiKey, String pageSize, int page, String country, final Context context) {
-        if (NetworkUtils.getInstance().checkConnection(context)){
-            Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize,String.valueOf(page),country);
+        if (NetworkUtils.getInstance().checkConnection(context)) {
+            Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize, String.valueOf(page), country);
             loadMMNewsCall.enqueue(new NewsCallBack<GetNewsResponse>() {
                 @Override
                 public void onResponse(Call<GetNewsResponse> call, Response<GetNewsResponse> response) {
-                    super.onResponse(call,response);
+                    super.onResponse(call, response);
                     GetNewsResponse getNewsResponse = response.body();
                     if (getNewsResponse != null
                             && getNewsResponse.getNewsList().size() > 0) {
-                        RestApiEvents.NewsListDataLoadedEvent newsDataLoadedEvent = new RestApiEvents.NewsListDataLoadedEvent( getNewsResponse.getNewsList(),context);
+                        RestApiEvents.NewsListDataLoadedEvent newsDataLoadedEvent = new RestApiEvents.NewsListDataLoadedEvent(getNewsResponse.getNewsList(), context);
                         EventBus.getDefault().post(newsDataLoadedEvent);
+                    }else {
+                        RestApiEvents.ErrorInvokingAPIEvent errorInvokingAPIEvent = new RestApiEvents.ErrorInvokingAPIEvent("No News to load.");
+                        EventBus.getDefault().post(errorInvokingAPIEvent);
                     }
                 }
             });
-        }else {
+        } else {
             RestApiEvents.ErrorInvokingAPIEvent errorInvokingAPIEvent = new RestApiEvents.ErrorInvokingAPIEvent("No Internet Connection");
             EventBus.getDefault().post(errorInvokingAPIEvent);
         }
 
+    }
+
+    @Override
+    public void loadCategoryNews(String apiKey, String pageSize, int page, String category, final Context context) {
+        if (NetworkUtils.getInstance().checkConnection(context)) {
+            Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllCategoryNewsList(apiKey, pageSize, String.valueOf(page), category);
+            loadMMNewsCall.enqueue(new NewsCallBack<GetNewsResponse>() {
+                @Override
+                public void onResponse(Call<GetNewsResponse> call, Response<GetNewsResponse> response) {
+                    super.onResponse(call, response);
+                    GetNewsResponse getNewsResponse = response.body();
+                    if (getNewsResponse != null
+                            && getNewsResponse.getNewsList().size() > 0) {
+                        RestApiEvents.CategoryNewsListDataLoadedEvent categoryNewsListDataLoadedEvent = new RestApiEvents.CategoryNewsListDataLoadedEvent(getNewsResponse.getNewsList(), context);
+                        EventBus.getDefault().post(categoryNewsListDataLoadedEvent);
+                    }else {
+                        RestApiEvents.CategoryNewsListErrorInvokingAPIEvent errorInvokingAPIEvent = new RestApiEvents.CategoryNewsListErrorInvokingAPIEvent("No News to load");
+                        EventBus.getDefault().post(errorInvokingAPIEvent);
+                    }
+                }
+            });
+        } else {
+            RestApiEvents.CategoryNewsListErrorInvokingAPIEvent categoryNewsListErrorInvokingAPIEvent = new RestApiEvents.CategoryNewsListErrorInvokingAPIEvent("No Internet Connection");
+            EventBus.getDefault().post(categoryNewsListErrorInvokingAPIEvent);
+        }
     }
 }

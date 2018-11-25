@@ -16,4 +16,8 @@ public interface NewsApi {
 
     @GET("top-headlines?")
     Call<GetNewsResponse> loadAllNewsList(@Query("apikey")String apiKey, @Query("pagesize")String pageSize, @Query("page")String page, @Query("country")String country);
+
+    @GET("top-headlines?")
+    Call<GetNewsResponse> loadAllCategoryNewsList(@Query("apikey")String apiKey, @Query("pagesize")String pageSize, @Query("page")String page, @Query("category")String category);
+
 }

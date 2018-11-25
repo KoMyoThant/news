@@ -16,5 +16,6 @@
     <color name="grey_goose_lighter">#E5E4E2</color>
     <color name="transparent_progress_bar">#40000000</color>
     <color name="grey">#323e3e3e</color>
+    <color name="transparent_black_half">#80000000</color>
 
 </resources>
