@@ -12,6 +12,7 @@ import com.ps.news.network.NewsDataAgent;
 import com.ps.news.network.NewsDataAgentImpl;
 import com.ps.news.persistence.NewsContract;
 import com.ps.news.utils.ConfigUtils;
+import com.ps.news.utils.NetworkUtils;
 import com.ps.news.utils.RestapiConstants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -55,6 +56,7 @@ public class NewsModel {
         //TODO to move place
         configUtils = new ConfigUtils(context);
         newsDataAgent.loadNews(RestapiConstants.API_KEY, "20", configUtils.loadPageIndex(), "us", context);
+
     }
 
     public void loadMoreNews(Context context) {

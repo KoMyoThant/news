@@ -23,6 +23,8 @@ import com.ps.news.data.model.NewsModel;
 import com.ps.news.data.vos.NewsVO;
 import com.ps.news.delegates.NewsItemDelegate;
 import com.ps.news.events.RestApiEvents;
+import com.ps.news.mvp.presenters.NewsListPresenter;
+import com.ps.news.mvp.views.NewsListView;
 import com.ps.news.persistence.NewsContract;
 
 import org.greenrobot.eventbus.EventBus;
@@ -35,7 +37,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, NewsItemDelegate {
+public class MainActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, NewsListView {
 
     private static final int NEWS_LOADER_ID = 1001;
 
@@ -54,6 +56,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
     private NewsListAdapter newsListAdapter;
     private SmartScrollListener mSmartScrollListener;
 
+    private NewsListPresenter mPresenter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,19 +69,20 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         toolbar.setBackgroundColor(getResources().getColor(R.color.accent_color));
         toolbar.setTitleTextColor(getResources().getColor(R.color.primary_color));
 
-        NewsModel.getInstance().startLoadingNewsList(getBaseContext());
+        mPresenter = new NewsListPresenter(this);
+        mPresenter.onStartLoadingNewsList(getBaseContext());
 
         vpNewsList.setEmptyData("Loading...");
         rvNewsList.setEmptyView(vpNewsList);
         rvNewsList.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
-        newsListAdapter = new NewsListAdapter(getApplicationContext(), this);
+        newsListAdapter = new NewsListAdapter(getApplicationContext(), mPresenter);
         rvNewsList.setAdapter(newsListAdapter);
 
         mSmartScrollListener = new SmartScrollListener(new SmartScrollListener.ControllerSmartScroll() {
             @Override
             public void onListEndReached() {
 //                Snackbar.make(rvNewsList, "Loading data...", Snackbar.LENGTH_LONG).show();
-                NewsModel.getInstance().loadMoreNews(getApplicationContext());
+                mPresenter.onLoadMoreNews(getApplicationContext());
             }
         });
         rvNewsList.addOnScrollListener(mSmartScrollListener);
@@ -85,17 +90,11 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                NewsModel.getInstance().forceRefreshNews(getBaseContext());
+                mPresenter.onForceRefresh(getBaseContext());
             }
         });
 
         getSupportLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
-    }
-
-    @Override
-    public void onTapNews() {
-        Intent intent = NewsDetailActivity.newIntent(getBaseContext(), "");
-        startActivity(intent);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -105,24 +104,31 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
         } else {
 //            newsListAdapter.appendNewData(newsListDataLoadedEvent.getLoadedNewsList());
         }
-//        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onErrorInvokingAPI(RestApiEvents.ErrorInvokingAPIEvent event) {
-        Snackbar.make(rvNewsList, event.getErrorMsg(), Snackbar.LENGTH_INDEFINITE).show();
+        Snackbar snackbar = Snackbar.make(rvNewsList, event.getErrorMsg(), Snackbar.LENGTH_INDEFINITE);
+        snackbar.setAction("Dismiss", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                v.setVisibility(View.GONE);
+            }
+        }).show();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+//        mPresenter.onStart();
         EventBus.getDefault().register(this);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
+//        mPresenter.onStop();
         EventBus.getDefault().unregister(this);
     }
 
@@ -139,21 +145,28 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        if (data != null && data.moveToFirst()) {
-            List<NewsVO> newsList = new ArrayList<>();
-            do {
-                NewsVO newsVO = NewsVO.parseFromCursor(getBaseContext(), data);
-                newsList.add(newsVO);
-            } while (data.moveToNext());
-
-//            mView.displayNewsList(newsList);
-            newsListAdapter.setNewData(newsList);
-            swipeRefreshLayout.setRefreshing(false);
-        }
+        mPresenter.onDataLoaded(getBaseContext(), data);
     }
 
     @Override
     public void onLoaderReset(@NonNull Loader<Cursor> loader) {
 
+    }
+
+    @Override
+    public void displayNewsList(List<NewsVO> newsList) {
+        newsListAdapter.setNewData(newsList);
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
+    @Override
+    public void refreshNewsList() {
+        swipeRefreshLayout.setRefreshing(true);
+    }
+
+    @Override
+    public void nevigateToNewsDetail(NewsVO newsVO) {
+        Intent intent = NewsDetailActivity.newIntent(getBaseContext(), newsVO.getNewsUrl());
+        startActivity(intent);
     }
 }

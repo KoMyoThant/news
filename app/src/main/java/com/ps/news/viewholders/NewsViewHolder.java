@@ -71,6 +71,6 @@ public class NewsViewHolder extends BaseViewHolder<NewsVO> {
 
     @Override
     public void onClick(View v) {
-        mNewsItemDelegate.onTapNews();
+        mNewsItemDelegate.onTapNews(mData);
     }
 }

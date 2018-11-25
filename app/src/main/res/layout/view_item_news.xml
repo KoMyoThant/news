@@ -32,7 +32,6 @@
             android:layout_marginLeft="@dimen/margin_medium"
             android:layout_marginTop="@dimen/margin_medium"
             android:ellipsize="end"
-            android:lineSpacingMultiplier="1.1"
             android:maxLines="3"
             android:text="North and South Korea Get UN's Go-Ahead to Study Joint Rail Project"
             android:textColor="@color/black_full"

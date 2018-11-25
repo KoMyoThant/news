@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import com.ps.news.events.RestApiEvents;
 import com.ps.news.network.responses.GetNewsResponse;
 import com.ps.news.utils.AppConstants;
+import com.ps.news.utils.NetworkUtils;
 import com.ps.news.utils.RestapiConstants;
 
 import org.greenrobot.eventbus.EventBus;
@@ -54,18 +55,24 @@ public class NewsDataAgentImpl implements NewsDataAgent {
 
     @Override
     public void loadNews(String apiKey, String pageSize, int page, String country, final Context context) {
-        Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize,String.valueOf(page),country);
-        loadMMNewsCall.enqueue(new NewsCallBack<GetNewsResponse>() {
-            @Override
-            public void onResponse(Call<GetNewsResponse> call, Response<GetNewsResponse> response) {
-                super.onResponse(call,response);
-                GetNewsResponse getNewsResponse = response.body();
-                if (getNewsResponse != null
-                        && getNewsResponse.getNewsList().size() > 0) {
-                    RestApiEvents.NewsListDataLoadedEvent newsDataLoadedEvent = new RestApiEvents.NewsListDataLoadedEvent( getNewsResponse.getNewsList(),context);
-                    EventBus.getDefault().post(newsDataLoadedEvent);
+        if (NetworkUtils.getInstance().checkConnection(context)){
+            Call<GetNewsResponse> loadMMNewsCall = theAPI.loadAllNewsList(apiKey, pageSize,String.valueOf(page),country);
+            loadMMNewsCall.enqueue(new NewsCallBack<GetNewsResponse>() {
+                @Override
+                public void onResponse(Call<GetNewsResponse> call, Response<GetNewsResponse> response) {
+                    super.onResponse(call,response);
+                    GetNewsResponse getNewsResponse = response.body();
+                    if (getNewsResponse != null
+                            && getNewsResponse.getNewsList().size() > 0) {
+                        RestApiEvents.NewsListDataLoadedEvent newsDataLoadedEvent = new RestApiEvents.NewsListDataLoadedEvent( getNewsResponse.getNewsList(),context);
+                        EventBus.getDefault().post(newsDataLoadedEvent);
+                    }
                 }
-            }
-        });
+            });
+        }else {
+            RestApiEvents.ErrorInvokingAPIEvent errorInvokingAPIEvent = new RestApiEvents.ErrorInvokingAPIEvent("No Internet Connection");
+            EventBus.getDefault().post(errorInvokingAPIEvent);
+        }
+
     }
 }

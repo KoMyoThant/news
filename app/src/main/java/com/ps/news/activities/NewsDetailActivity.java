@@ -52,11 +52,11 @@ public class NewsDetailActivity extends BaseActivity {
         wbNewsDetails.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
-                view.loadUrl("http://www.google.com");
+                view.loadUrl(getIntent().getStringExtra(NEWS_URL));
                 return true;
             }
         });
-        wbNewsDetails.loadUrl("http://www.google.com");
+        wbNewsDetails.loadUrl(getIntent().getStringExtra(NEWS_URL));
 
 
     }
