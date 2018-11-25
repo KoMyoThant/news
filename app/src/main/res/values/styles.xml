@@ -54,8 +54,4 @@
         <item name="android:shadowRadius">1</item>
     </style>
 
-    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
-        <item name="android:windowBackground">@drawable/bg_splash</item>
-    </style>
-
 </resources>

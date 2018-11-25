@@ -1,5 +1,6 @@
 package com.ps.news.activities;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -58,6 +59,11 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     private NewsListPresenter mPresenter;
 
+
+    public static Intent newIntent(Context context){
+        Intent intent = new Intent(context,MainActivity.class);
+        return intent;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -166,7 +172,8 @@ public class MainActivity extends BaseActivity implements LoaderManager.LoaderCa
 
     @Override
     public void nevigateToNewsDetail(NewsVO newsVO) {
-        Intent intent = NewsDetailActivity.newIntent(getBaseContext(), newsVO.getNewsUrl());
+//        Intent intent = NewsDetailActivity.newIntent(getBaseContext(), newsVO.getNewsUrl());
+        Intent intent = new Intent(getApplicationContext(),SplashActivity.class);
         startActivity(intent);
     }
 }
