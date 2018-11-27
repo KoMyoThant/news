@@ -14,7 +14,7 @@
             android:layout_height="@dimen/category_img_height"
             android:layout_marginLeft="@dimen/margin_tiny"
             android:layout_marginRight="@dimen/margin_tiny"
-            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_tiny"
             android:foreground="@drawable/ripple_white"
             card_view:cardCornerRadius="@dimen/margin_small"
             card_view:cardElevation="@dimen/margin_small">
@@ -53,7 +53,7 @@
             android:layout_height="@dimen/category_img_height"
             android:layout_marginLeft="@dimen/margin_tiny"
             android:layout_marginRight="@dimen/margin_tiny"
-            android:layout_marginTop="@dimen/margin_medium"
+            android:layout_marginTop="@dimen/margin_tiny"
             android:layout_below="@id/cv_business_category"
             android:foreground="@drawable/ripple_white"
             card_view:cardCornerRadius="@dimen/margin_small"

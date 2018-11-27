@@ -3,10 +3,11 @@ package com.ps.news.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.ps.news.R;
@@ -17,7 +18,6 @@ import com.ps.news.components.rvset.SmartScrollListener;
 import com.ps.news.data.vos.NewsVO;
 import com.ps.news.events.RestApiEvents;
 import com.ps.news.mvp.presenters.CategoryNewsListPresenter;
-import com.ps.news.mvp.presenters.NewsListPresenter;
 import com.ps.news.mvp.views.CategoryNewsListView;
 import com.ps.news.utils.ConfigUtils;
 
@@ -25,8 +25,6 @@ import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 
 import butterknife.BindView;
@@ -102,6 +100,31 @@ public class NewsListInCategoryActivity extends BaseActivity implements Category
 
     }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+//        mPresenter.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+//        mPresenter.onStop();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case android.R.id.home:
+                onBackPressed();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     public void onCategoryNewsDataLoaded(RestApiEvents.CategoryNewsListDataLoadedEvent categoryNewsListDataLoadedEvent) {
         if (categoryNewsListDataLoadedEvent.getLoadedNewsList() == null && categoryNewsListDataLoadedEvent.getLoadedNewsList().isEmpty()) {
@@ -135,20 +158,6 @@ public class NewsListInCategoryActivity extends BaseActivity implements Category
         }).show();
         swipeRefreshLayout.setRefreshing(false);
         vpNewsList.setEmptyData(event.getErrorMsg());
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-//        mPresenter.onStart();
-        EventBus.getDefault().register(this);
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-//        mPresenter.onStop();
-        EventBus.getDefault().unregister(this);
     }
 
     @Override
