@@ -28,6 +28,7 @@ import com.ps.news.events.RestApiEvents;
 import com.ps.news.mvp.presenters.NewsListPresenter;
 import com.ps.news.mvp.views.NewsListView;
 import com.ps.news.persistence.NewsContract;
+import com.ps.news.utils.AppConstants;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -102,7 +103,7 @@ public class DiscoverFragment extends BaseFragment implements LoaderManager.Load
             }
         });
 
-        getActivity().getSupportLoaderManager().initLoader(NEWS_LOADER_ID, null, this);
+        getActivity().getSupportLoaderManager().initLoader(AppConstants.NEWS_LIST_LOADER_ID, null, this);
 
         return view;
     }

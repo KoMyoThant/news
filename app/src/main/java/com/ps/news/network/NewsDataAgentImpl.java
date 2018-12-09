@@ -101,6 +101,9 @@ public class NewsDataAgentImpl implements NewsDataAgent {
         } else {
             RestApiEvents.CategoryNewsListErrorInvokingAPIEvent categoryNewsListErrorInvokingAPIEvent = new RestApiEvents.CategoryNewsListErrorInvokingAPIEvent("No Internet Connection");
             EventBus.getDefault().post(categoryNewsListErrorInvokingAPIEvent);
+
+//            RestApiEvents.ErrorInvokingAPIEvent errorInvokingAPIEvent = new RestApiEvents.ErrorInvokingAPIEvent("No Internet Connection");
+//            EventBus.getDefault().post(errorInvokingAPIEvent);
         }
     }
 }

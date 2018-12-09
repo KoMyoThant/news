@@ -99,7 +99,8 @@ public class NewsProvider extends ContentProvider {
         if (getContext() != null) {
             queryCursor.setNotificationUri(getContext().getContentResolver(), uri);
         }
-        return queryCursor;    }
+        return queryCursor;
+    }
 
     @Nullable
     @Override

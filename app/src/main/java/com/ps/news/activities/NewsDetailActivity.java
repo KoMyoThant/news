@@ -47,7 +47,7 @@ public class NewsDetailActivity extends BaseActivity {
         ButterKnife.bind(this, this);
 
         if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle("Details");
+            getSupportActionBar().setTitle(getIntent().getStringExtra(NEWS_URL));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 

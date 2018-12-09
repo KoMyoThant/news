@@ -6,4 +6,6 @@ package com.ps.news.utils;
 
 public class AppConstants {
 
+    public static int NEWS_LIST_LOADER_ID = 1000;
+
 }

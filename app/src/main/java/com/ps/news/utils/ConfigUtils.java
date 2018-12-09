@@ -14,9 +14,6 @@ public class ConfigUtils {
 
     private SharedPreferences mSharedPreferences;
 
-    private static int NEWS_DETAILS_LOADER_ID = 1002;
-
-
     private static ConfigUtils objInstance;
 
     public static ConfigUtils getInstance(Context context) {
