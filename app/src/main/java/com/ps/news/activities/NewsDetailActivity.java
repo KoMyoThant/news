@@ -1,22 +1,21 @@
 package com.ps.news.activities;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.os.PersistableBundle;
-import android.support.annotation.Nullable;
-import android.view.MenuItem;
+import android.text.TextUtils;
 import android.view.View;
-import android.webkit.WebResourceError;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.ps.news.R;
+import com.ps.news.utils.StringUtils;
+
+import java.net.URISyntaxException;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -28,11 +27,22 @@ public class NewsDetailActivity extends BaseActivity {
 
     public static final String NEWS_URL = "NEWS_URL";
 
+    @BindView(R.id.iv_back_key)
+    ImageView ivBackKey;
+
+    @BindView(R.id.tv_news_source_url)
+    TextView tvNewsSourceUrl;
+
+    @BindView(R.id.iv_share_key)
+    ImageView ivShareKey;
+
     @BindView(R.id.wb_news_details)
     WebView wbNewsDetails;
 
     @BindView(R.id.progress_bar)
     ProgressBar progressBar;
+
+    private String newsSourceUrl;
 
     public static Intent newIntent(Context context, String newsUrl) {
         Intent intent = new Intent(context, NewsDetailActivity.class);
@@ -46,9 +56,10 @@ public class NewsDetailActivity extends BaseActivity {
         setContentView(R.layout.activity_news_detail);
         ButterKnife.bind(this, this);
 
-        if(getSupportActionBar() != null){
-            getSupportActionBar().setTitle(getIntent().getStringExtra(NEWS_URL));
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        newsSourceUrl = getIntent().getStringExtra(NEWS_URL);
+
+        if (!TextUtils.isEmpty(newsSourceUrl)) {
+            tvNewsSourceUrl.setText(newsSourceUrl);
         }
 
         wbNewsDetails.getSettings().setJavaScriptEnabled(true);
@@ -56,21 +67,30 @@ public class NewsDetailActivity extends BaseActivity {
         wbNewsDetails.setWebViewClient(new MyWebViewClient());
         wbNewsDetails.getSettings().setLoadsImagesAutomatically(true);
 
-        if (getIntent().getStringExtra(NEWS_URL) != null && !getIntent().getStringExtra(NEWS_URL).isEmpty()) {
-            wbNewsDetails.loadUrl(getIntent().getStringExtra(NEWS_URL));
+        if (newsSourceUrl != null && !newsSourceUrl.isEmpty()) {
+            wbNewsDetails.loadUrl(newsSourceUrl);
         }
 
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        switch (id) {
-            case android.R.id.home:
+        ivBackKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 onBackPressed();
-        }
+            }
+        });
 
-        return super.onOptionsItemSelected(item);
+        ivShareKey.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!TextUtils.isEmpty(newsSourceUrl)) {
+                    Intent shareIntent = new Intent();
+                    shareIntent.setAction(Intent.ACTION_SEND);
+                    shareIntent.setType("text/plain");
+                    shareIntent.putExtra(Intent.EXTRA_TEXT, newsSourceUrl);
+                    startActivity(shareIntent);
+                }
+            }
+        });
+
     }
 
     public class MyWebViewClient extends WebViewClient {
@@ -95,6 +115,14 @@ public class NewsDetailActivity extends BaseActivity {
             super.onPageFinished(view, url);
 
             progressBar.setVisibility(View.GONE);
+
+            if (!TextUtils.isEmpty(newsSourceUrl)) {
+                try {
+                    tvNewsSourceUrl.setText(StringUtils.getHostName(newsSourceUrl));
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 

@@ -30,7 +30,7 @@
 
         <activity
             android:name=".activities.NewsDetailActivity"
-            android:theme="@style/AppTheme">
+            android:theme="@style/AppTheme.NoActionBar">
             <!--<intent-filter>-->
             <!--<action android:name="android.intent.action.MAIN" />-->
 
@@ -38,8 +38,9 @@
             <!--</intent-filter>-->
         </activity>
 
-        <activity android:name=".activities.NewsListInCategoryActivity"
-            android:theme="@style/AppTheme"/>
+        <activity
+            android:name=".activities.NewsListInCategoryActivity"
+            android:theme="@style/AppTheme" />
 
         <receiver android:name=".receiver.InternetStateReceiver">
             <intent-filter>
